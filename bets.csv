@@ -1,0 +1,2 @@
+bet_id,username,match_id,bet_type,amount,odds,status,date
+1,user1,2,team2,10.0,1.77,pending,2025-10-19 14:50:15

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Paris - Weeznamax</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="margin-bottom: 0;">⚽ WEEZNAMAX</h1>
+            <div style="text-align: right;">
+                <div style="color: #fff; font-size: 0.9em; margin-bottom: 5px;">
+                    👤 Connecté: <strong id="userName"></strong>
+                </div>
+                <div style="color: #ff0000; font-size: 1.5em; font-weight: bold; margin-bottom: 10px;">
+                    💰 <span id="userCredits">0</span> Wiz
+                </div>
+                <a href="/logout" class="logout-btn">🚪 Déconnexion</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('matches')">Matchs Disponibles</button>
+                <button class="tab" onclick="switchTab('mybets')">Mes Paris</button>
+            </div>
+            
+            <!-- Onglet Matchs Disponibles -->
+            <div id="matches" class="tab-content active">
+                <h2>Matchs Disponibles pour Parier</h2>
+                <div id="matchesList"></div>
+            </div>
+            
+            <!-- Onglet Mes Paris -->
+            <div id="mybets" class="tab-content">
+                <h2>Mes Paris</h2>
+                <div id="betsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour parier -->
+    <div id="betModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBetModal()">&times;</span>
+            <h2>Placer un Pari</h2>
+            <div id="betModalContent"></div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='user_script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weeznamax - Paris Babyfoot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="margin-bottom: 0;">⚽ WEEZNAMAX</h1>
+            <div>
+                <span style="color: #fff; margin-right: 15px; font-weight: bold;">👤 Admin</span>
+                <a href="/logout" class="logout-btn">🚪 Déconnexion</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('teams')">Gestion des Équipes</button>
+                <button class="tab" onclick="switchTab('programme')">Programme</button>
+                <button class="tab" onclick="switchTab('history')">Historique</button>
+            </div>
+            
+            <!-- Onglet Gestion des Équipes -->
+            <div id="teams" class="tab-content active">
+                <h2>Ajouter une Équipe</h2>
+                <form id="addTeamForm">
+                    <div class="form-group">
+                        <label for="teamName">Nom de l'équipe</label>
+                        <input type="text" id="teamName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="teamElo">Elo initial</label>
+                        <input type="number" id="teamElo" value="1500" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="teamPoule">Poule (optionnel)</label>
+                        <input type="text" id="teamPoule" placeholder="ex: A, B, C...">
+                    </div>
+                    <button type="submit">Ajouter l'équipe</button>
+                </form>
+                
+                <h2 style="margin-top: 40px;">Équipes Enregistrées</h2>
+                <div id="teamsList" class="teams-grid"></div>
+            </div>
+            
+            <!-- Onglet Programme -->
+            <div id="programme" class="tab-content">
+                <h2>Ajouter un Match au Programme</h2>
+                <div class="form-group">
+                    <label for="progTeam1">Équipe 1</label>
+                    <select id="progTeam1"></select>
+                </div>
+                <div class="form-group">
+                    <label for="progTeam2">Équipe 2</label>
+                    <select id="progTeam2"></select>
+                </div>
+                <button onclick="addScheduledMatch()">Programmer le match</button>
+                
+                <h2 style="margin-top: 40px;">Matchs à Venir</h2>
+                <div id="scheduledMatches"></div>
+            </div>
+            
+            <!-- Onglet Historique -->
+            <div id="history" class="tab-content">
+                <h2>Historique des Matchs</h2>
+                <div id="matchHistory" class="match-history"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour modifier une équipe -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Modifier l'équipe</h2>
+            <form id="editTeamForm">
+                <input type="hidden" id="editOldName">
+                <div class="form-group">
+                    <label for="editName">Nom de l'équipe</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editElo">Elo</label>
+                    <input type="number" id="editElo" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPoule">Poule</label>
+                    <input type="text" id="editPoule">
+                </div>
+                <button type="submit">Sauvegarder</button>
+                <button type="button" class="secondary" onclick="closeEditModal()">Annuler</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
