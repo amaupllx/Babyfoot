@@ -402,3 +402,24 @@ select option {
 .logout-btn:hover {
     background: #cc0000;
 }
+
+.bet-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bet-card:hover {
+    border-color: #ff0000;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.bet-card:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.2);
+}

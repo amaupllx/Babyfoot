@@ -42,16 +42,15 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """Déconnexion"""
+    """Sign out"""
     session.clear()
     return redirect(url_for('login_page'))
-
 
 # ========== ROUTES ADMIN ==========
 
 @app.route('/admin')
 def admin():
-    """Page d'administration"""
+    """Admin page"""
     if 'username' not in session or not session.get('is_admin'):
         return redirect(url_for('login_page'))
     return render_template('index.html')

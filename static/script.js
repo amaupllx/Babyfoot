@@ -36,7 +36,6 @@ document.getElementById('addTeamForm').addEventListener('submit', async (e) => {
         document.getElementById('teamElo').value = '1500';
         document.getElementById('teamPoule').value = '';
         loadTeams();
-        alert('Équipe ajoutée avec succès !');
     }
 });
 
@@ -98,7 +97,6 @@ document.getElementById('editTeamForm').addEventListener('submit', async (e) => 
     if (response.ok) {
         closeEditModal();
         loadTeams();
-        alert('Équipe modifiée avec succès !');
     }
 });
 
@@ -113,7 +111,6 @@ async function deleteTeam(name) {
     
     if (response.ok) {
         loadTeams();
-        alert('Équipe supprimée avec succès !');
     }
 }
 
@@ -143,7 +140,6 @@ async function addScheduledMatch() {
         document.getElementById('progTeam1').value = '';
         document.getElementById('progTeam2').value = '';
         loadScheduledMatches();
-        alert('Match programmé avec succès !');
     }
 }
 
@@ -235,10 +231,6 @@ async function enterScore(matchId, team1, team2) {
     
     const result = await response.json();
     
-    alert(`Match enregistré !
-${result.team1}: ${result.old_elo1} → ${result.new_elo1} (${result.change1 > 0 ? '+' : ''}${result.change1})
-${result.team2}: ${result.old_elo2} → ${result.new_elo2} (${result.change2 > 0 ? '+' : ''}${result.change2})`);
-    
     loadTeams();
     loadScheduledMatches();
 }
@@ -254,7 +246,6 @@ async function deleteScheduledMatch(matchId) {
     
     if (response.ok) {
         loadScheduledMatches();
-        alert('Match supprimé du programme');
     }
 }
 

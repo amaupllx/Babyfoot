@@ -47,23 +47,20 @@ async function loadMatches() {
                     <div class="match-teams">${match.team1} vs ${match.team2}</div>
                 </div>
                 <div class="match-odds">
-                    <div class="odds-box" style="cursor: pointer;" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'team1', ${oddsData.odds1})">
+                    <div class="bet-card" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'team1', ${oddsData.odds1})">
                         <div class="odds-label">Victoire ${match.team1}</div>
                         <div class="odds-value-small">${oddsData.odds1}</div>
-                        <div style="color: #999; font-size: 0.9em;">${oddsData.prob1}%</div>
-                        <button class="score-button" style="margin-top: 10px; padding: 10px;">PARIER</button>
+                        <div style="color: #999; font-size: 0.9em; margin-top: 5px;">${oddsData.prob1}%</div>
                     </div>
-                    <div class="odds-box" style="cursor: pointer;" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'draw', ${oddsData.odds_draw})">
+                    <div class="bet-card" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'draw', ${oddsData.odds_draw})">
                         <div class="odds-label">Match Nul</div>
                         <div class="odds-value-small">${oddsData.odds_draw}</div>
-                        <div style="color: #999; font-size: 0.9em;">${oddsData.prob_draw}%</div>
-                        <button class="score-button" style="margin-top: 10px; padding: 10px;">PARIER</button>
+                        <div style="color: #999; font-size: 0.9em; margin-top: 5px;">${oddsData.prob_draw}%</div>
                     </div>
-                    <div class="odds-box" style="cursor: pointer;" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'team2', ${oddsData.odds2})">
+                    <div class="bet-card" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'team2', ${oddsData.odds2})">
                         <div class="odds-label">Victoire ${match.team2}</div>
                         <div class="odds-value-small">${oddsData.odds2}</div>
-                        <div style="color: #999; font-size: 0.9em;">${oddsData.prob2}%</div>
-                        <button class="score-button" style="margin-top: 10px; padding: 10px;">PARIER</button>
+                        <div style="color: #999; font-size: 0.9em; margin-top: 5px;">${oddsData.prob2}%</div>
                     </div>
                 </div>
             </div>
@@ -86,27 +83,30 @@ function openBetModal(matchId, team1, team2, betType, odds) {
     const maxBet = currentUser.credits;
     
     document.getElementById('betModalContent').innerHTML = `
-        <div style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 4px;">
-            <strong>Match:</strong> ${team1} vs ${team2}<br>
-            <strong>Pari:</strong> ${betLabel}<br>
-            <strong>Cote:</strong> <span style="color: #ff0000; font-size: 1.3em; font-weight: bold;">${odds}</span>
+        <div style="margin-bottom: 25px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+            <div style="font-size: 1.1em; color: #333; margin-bottom: 10px;">
+                <strong>Match:</strong> ${team1} vs ${team2}
+            </div>
+            <div style="font-size: 1.1em; color: #333; margin-bottom: 10px;">
+                <strong>Pari:</strong> ${betLabel}
+            </div>
+            <div style="font-size: 1.1em; color: #333;">
+                <strong>Cote:</strong> <span style="color: #ff0000; font-size: 1.5em; font-weight: bold;">${odds}</span>
+            </div>
         </div>
         <div class="form-group">
-            <label for="betAmount">Montant du pari (Wiz)</label>
+            <label for="betAmount" style="font-size: 1.1em;">Montant du pari (Wiz)</label>
             <input type="number" id="betAmount" min="0.01" max="${maxBet}" step="0.01" placeholder="0.00" required>
-            <small style="color: #666;">Crédits disponibles: ${maxBet.toFixed(2)} Wiz</small>
+            <small style="color: #666; font-size: 1em;">Crédits disponibles: ${maxBet.toFixed(2)} Wiz</small>
         </div>
-        <div style="margin: 20px 0; padding: 15px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px;">
-            <strong>Gain potentiel:</strong> <span id="potentialWin" style="color: #00aa00; font-size: 1.2em; font-weight: bold;">0.00 Wiz</span>
+        <div style="margin: 25px 0; padding: 20px; background: #f0fff0; border: 2px solid #00aa00; border-radius: 8px;">
+            <div style="font-size: 1.1em; color: #333; margin-bottom: 5px;"><strong>Gain potentiel:</strong></div>
+            <div id="potentialWin" style="color: #00aa00; font-size: 1.8em; font-weight: bold;">0.00 Wiz</div>
         </div>
         <button onclick="placeBet(${matchId}, '${betType}', ${odds})" class="score-button">
-            ✓ CONFIRMER LE PARI
-        </button>
-        <button onclick="closeBetModal()" class="secondary" style="width: 100%; margin-top: 10px;">
-            Annuler
+            VALIDER
         </button>
     `;
-    
     // Calculer le gain potentiel en temps réel
     document.getElementById('betAmount').addEventListener('input', (e) => {
         const amount = parseFloat(e.target.value) || 0;
@@ -144,10 +144,17 @@ async function placeBet(matchId, betType, odds) {
         const data = await response.json();
         
         if (data.success) {
-            alert(`Pari enregistré avec succès !\nGain potentiel: ${(amount * odds).toFixed(2)} Wiz`);
             closeBetModal();
             loadUserInfo();
-            loadMatches();
+            
+            // Rediriger vers l'onglet "Mes paris"
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector('.tab[onclick*="mybets"]').classList.add('active');
+            document.getElementById('mybets').classList.add('active');
+            
+            loadMyBets();
         } else {
             alert('Erreur: ' + data.error);
         }
@@ -171,7 +178,14 @@ async function loadMyBets() {
     const matchesResponse = await fetch('/api/user/matches');
     const matches = await matchesResponse.json();
     
-    container.innerHTML = bets.map(bet => {
+    // Séparer les paris en attente et terminés
+    const pendingBets = bets.filter(bet => bet.status === 'pending');
+    const completedBets = bets.filter(bet => bet.status !== 'pending');
+    
+    // Afficher d'abord les paris en attente, puis les terminés
+    const sortedBets = [...pendingBets, ...completedBets];
+    
+    container.innerHTML = sortedBets.map(bet => {
         const match = matches.find(m => m.id === bet.match_id);
         
         let betLabel = '';
@@ -196,19 +210,34 @@ async function loadMyBets() {
         return `
             <div class="match-item">
                 <div class="match-date">${bet.date}</div>
-                <div style="margin: 10px 0;">
-                    <strong>${match ? match.team1 + ' vs ' + match.team2 : 'Match terminé'}</strong><br>
-                    Pari: ${betLabel}<br>
-                    Mise: ${parseFloat(bet.amount).toFixed(2)} Wiz | Cote: ${bet.odds}
+                <div style="margin: 10px 0; color: #333;">
+                    <strong style="color: #333;">${match ? match.team1 + ' vs ' + match.team2 : 'Match terminé'}</strong><br>
+                    <span style="color: #333;">Pari: ${betLabel}</span><br>
+                    <span style="color: #333;">Mise: ${parseFloat(bet.amount).toFixed(2)} Wiz | Cote: ${bet.odds}</span>
                 </div>
                 <div style="font-weight: bold; color: ${statusColor}; font-size: 1.1em;">
                     ${statusText}
                 </div>
             </div>
         `;
-    }).reverse().join('');
+    }).join('');
 }
 
 // Charger les infos au démarrage
 loadUserInfo();
 loadMatches();
+
+// Vérifier les résultats toutes les 30 secondes
+setInterval(() => {
+    // Recharger les crédits et les paris si on est sur l'onglet "Mes paris"
+    const myBetsTab = document.getElementById('mybets');
+    if (myBetsTab && myBetsTab.classList.contains('active')) {
+        loadUserInfo();
+        loadMyBets();
+    }
+    // Recharger les matchs disponibles si on est sur l'onglet "Matches"
+    const matchesTab = document.getElementById('matches');
+    if (matchesTab && matchesTab.classList.contains('active')) {
+        loadMatches();
+    }
+}, 30000); // Toutes les 30 secondes
