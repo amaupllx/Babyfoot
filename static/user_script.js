@@ -52,11 +52,6 @@ async function loadMatches() {
                         <div class="odds-value-small">${oddsData.odds1}</div>
                         <div style="color: #999; font-size: 0.9em; margin-top: 5px;">${oddsData.prob1}%</div>
                     </div>
-                    <div class="bet-card" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'draw', ${oddsData.odds_draw})">
-                        <div class="odds-label">Match Nul</div>
-                        <div class="odds-value-small">${oddsData.odds_draw}</div>
-                        <div style="color: #999; font-size: 0.9em; margin-top: 5px;">${oddsData.prob_draw}%</div>
-                    </div>
                     <div class="bet-card" onclick="openBetModal(${match.id}, '${match.team1}', '${match.team2}', 'team2', ${oddsData.odds2})">
                         <div class="odds-label">Victoire ${match.team2}</div>
                         <div class="odds-value-small">${oddsData.odds2}</div>

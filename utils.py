@@ -317,32 +317,20 @@ def calculate_elo_change(elo1, elo2, score1, score2):
 
 
 def calculate_odds(elo1, elo2):
-    """Calcule les cotes pour un match entre deux équipes"""
-    # Calcul des probabilités de base (sans match nul)
-    prob1_base = 1 / (1 + math.pow(10, (elo2 - elo1) / ELO_BASE))
-    prob2_base = 1 - prob1_base
-    
-    # Probabilité de match nul (diminue avec la différence d'Elo)
-    elo_diff = abs(elo1 - elo2)
-    # Base de 12% pour des équipes égales, diminue avec la différence
-    prob_draw = max(0.05, 0.12 - (elo_diff / 500) * 0.07)
-    
-    # Ajustement des probabilités de victoire
-    prob1 = prob1_base * (1 - prob_draw)
-    prob2 = prob2_base * (1 - prob_draw)
+    """Calcule les cotes pour un match entre deux équipes (sans match nul)"""
+    # Calcul des probabilités directes (victoire team1 vs team2)
+    prob1 = 1 / (1 + math.pow(10, (elo2 - elo1) / ELO_BASE))
+    prob2 = 1 - prob1
     
     # Calcul des cotes
     odds1 = round(1 / prob1, 2)
     odds2 = round(1 / prob2, 2)
-    odds_draw = round(1 / prob_draw, 2)
     
     return {
         'prob1': round(prob1 * 100, 1),
         'prob2': round(prob2 * 100, 1),
-        'prob_draw': round(prob_draw * 100, 1),
         'odds1': odds1,
-        'odds2': odds2,
-        'odds_draw': odds_draw
+        'odds2': odds2
     }
 
 

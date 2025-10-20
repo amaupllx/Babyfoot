@@ -178,11 +178,6 @@ async function loadScheduledMatches() {
                         <div style="color: #999; font-size: 0.9em;">${oddsData.prob1}%</div>
                     </div>
                     <div class="odds-box">
-                        <div class="odds-label">Match Nul</div>
-                        <div class="odds-value-small">${oddsData.odds_draw}</div>
-                        <div style="color: #999; font-size: 0.9em;">${oddsData.prob_draw}%</div>
-                    </div>
-                    <div class="odds-box">
                         <div class="odds-label">Victoire ${match.team2}</div>
                         <div class="odds-value-small">${oddsData.odds2}</div>
                         <div style="color: #999; font-size: 0.9em;">${oddsData.prob2}%</div>
