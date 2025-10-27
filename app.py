@@ -6,7 +6,8 @@ from utils import (
     init_csv_files, read_teams, write_team, update_team, delete_team,
     calculate_odds, add_match, read_matches,
     read_scheduled_matches, add_scheduled_match, delete_scheduled_match,
-    verify_user, get_user_credits, is_admin, add_bet, get_user_bets
+    verify_user, get_user_credits, is_admin, add_bet, get_user_bets, add_credits_to_all_users,
+    get_leaderboard,
 )
 
 app = Flask(__name__)
@@ -108,6 +109,40 @@ def scheduled():
         return jsonify({'success': True, 'id': match_id})
     else:
         return jsonify(read_scheduled_matches())
+
+
+@app.route('/admin/add_credits', methods=['POST'])
+def admin_add_credits():
+    if 'username' not in session or not is_admin(session['username']):
+        return jsonify({'success': False, 'message': 'Accès refusé'})
+    
+    try:
+        amount = int(request.form.get('amount', 10))
+        num_users = add_credits_to_all_users(amount)
+        return jsonify({
+            'success': True, 
+            'message': f'{amount} Wiz distribués à {num_users} utilisateurs'
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+
+@app.route('/api/matches')
+def api_matches():
+    """API pour récupérer l'historique des matchs"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Non connecté'})
+    
+    matches = read_matches()
+    return jsonify({'success': True, 'matches': matches})
+
+@app.route('/api/leaderboard')
+def api_leaderboard():
+    """API pour récupérer le classement des utilisateurs"""
+    if 'username' not in session or not is_admin(session['username']):
+        return jsonify({'success': False, 'message': 'Accès refusé'})
+    
+    leaderboard = get_leaderboard(10)
+    return jsonify({'success': True, 'leaderboard': leaderboard})
 
 
 @app.route('/api/scheduled/<int:match_id>', methods=['DELETE'])

@@ -21,6 +21,7 @@
                 <button class="tab active" onclick="switchTab('teams')">Gestion des Équipes</button>
                 <button class="tab" onclick="switchTab('programme')">Programme</button>
                 <button class="tab" onclick="switchTab('history')">Historique</button>
+                <button class="tab" onclick="switchTab('leaderboard')">🏆 Classement</button>
             </div>
             
             <!-- Onglet Gestion des Équipes -->
@@ -44,6 +45,15 @@
                 
                 <h2 style="margin-top: 40px;">Équipes Enregistrées</h2>
                 <div id="teamsList" class="teams-grid"></div>
+                
+                <!-- Distribution de crédits -->
+                <div style="margin-top: 40px; padding: 15px; background: #f0f8ff; border-radius: 8px;">
+                    <h3>💰 Distribution de crédits</h3>
+                    <button onclick="distributeCredits()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Ajouter 10 Wiz à tous les utilisateurs
+                    </button>
+                    <div id="credits-message" style="margin-top: 10px;"></div>
+                </div>
             </div>
             
             <!-- Onglet Programme -->
@@ -67,6 +77,12 @@
             <div id="history" class="tab-content">
                 <h2>Historique des Matchs</h2>
                 <div id="matchHistory" class="match-history"></div>
+            </div>
+
+            <!-- Onglet Classement -->
+            <div id="leaderboard" class="tab-content">
+                <h2>🏆 Classement des Utilisateurs - Top 10</h2>
+                <div id="leaderboardList" class="leaderboard-container"></div>
             </div>
         </div>
     </div>

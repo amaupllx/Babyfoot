@@ -1,2 +1,5 @@
 bet_id,username,match_id,bet_type,amount,odds,status,date
 1,user1,1,team1,10.0,2.61,won,2025-10-20 23:53:58
+2,user1,1,team1,15.0,1.43,lost,2025-10-23 15:43:16
+3,user1,2,team2,35.0,2.04,lost,2025-10-23 15:43:27
+4,user1,3,team1,10.0,1.59,refunded,2025-10-27 19:26:49

@@ -103,6 +103,29 @@ def is_admin(username):
     return username == 'admin'
 
 
+def add_credits_to_all_users(amount=10):
+    """Ajoute un montant de crédits à tous les utilisateurs"""
+    users = read_users()
+    with open(USERS_FILE, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['username', 'password', 'credits'])
+        for user in users:
+            new_credits = user['credits'] + amount
+            writer.writerow([user['username'], user['password'], new_credits])
+            print(f"   💰 {user['username']} a reçu {amount} Wiz (total: {new_credits} Wiz)")
+    
+    return len(users)
+
+
+def get_leaderboard(limit=10):
+    """Récupère le classement des utilisateurs par crédits (top limit)"""
+    users = read_users()
+    # Trier par crédits décroissants
+    users_sorted = sorted(users, key=lambda x: x['credits'], reverse=True)
+    # Retourner seulement les N premiers (et exclure admin si souhaité)
+    return [u for u in users_sorted if u['username'] != 'admin'][:limit]
+
+
 # ============ GESTION DES PARIS ============
 
 def read_bets():
@@ -167,7 +190,15 @@ def process_match_bets(match_id, team1, team2, score1, score2):
         for bet in bets:
             if bet['match_id'] == str(match_id) and bet['status'] == 'pending':
                 # Ce pari concerne ce match
-                if bet['bet_type'] == result:
+                if result == 'draw':
+                    # Match nul : rembourser tous les paris
+                    refund_amount = float(bet['amount'])
+                    current_credits = get_user_credits(bet['username'])
+                    update_user_credits(bet['username'], current_credits + refund_amount)
+                    print(f"   🔄 {bet['username']} a été remboursé de {refund_amount:.2f} Wiz (match nul)")
+                    writer.writerow([bet['bet_id'], bet['username'], bet['match_id'], 
+                                   bet['bet_type'], bet['amount'], bet['odds'], 'refunded', bet['date']])
+                elif bet['bet_type'] == result:
                     # L'utilisateur a gagné
                     winnings = float(bet['amount']) * float(bet['odds'])
                     current_credits = get_user_credits(bet['username'])

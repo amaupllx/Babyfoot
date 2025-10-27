@@ -279,5 +279,110 @@ async function loadHistory() {
     `).reverse().join('');
 }
 
+function distributeCredits() {
+    if (!confirm('Êtes-vous sûr de vouloir distribuer 10 Wiz à tous les utilisateurs ?')) {
+        return;
+    }
+    
+    fetch('/admin/add_credits', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'amount=10'
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageDiv = document.getElementById('credits-message');
+        if (data.success) {
+            messageDiv.innerHTML = `<div style="padding: 10px; background: #d4edda; color: #155724; border-radius: 5px;">${data.message}</div>`;
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            messageDiv.innerHTML = `<div style="padding: 10px; background: #f8d7da; color: #721c24; border-radius: 5px;">${data.message}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        document.getElementById('credits-message').innerHTML = 
+            '<div style="padding: 10px; background: #f8d7da; color: #721c24; border-radius: 5px;">Erreur lors de la distribution</div>';
+    });
+}
+
+// Charger le classement des utilisateurs
+function loadLeaderboard() {
+    fetch('/api/leaderboard')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayLeaderboard(data.leaderboard);
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+}
+
+
+// Afficher le classement
+function displayLeaderboard(leaderboard) {
+    const container = document.getElementById('leaderboardList');
+    
+    if (leaderboard.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666;">Aucun utilisateur trouvé</p>';
+        return;
+    }
+    
+    let html = '<table class="leaderboard-table">';
+    html += '<thead><tr><th>Rang</th><th>Utilisateur</th><th>Crédits</th></tr></thead>';
+    html += '<tbody>';
+    
+    leaderboard.forEach((user, index) => {
+        const rank = index + 1;
+        let medal = '';
+        
+        // Ajouter des médailles pour le top 3
+        if (rank === 1) medal = '🥇';
+        else if (rank === 2) medal = '🥈';
+        else if (rank === 3) medal = '🥉';
+        
+        const rankDisplay = medal ? `${medal} ${rank}` : rank;
+        
+        html += `
+            <tr class="rank-${rank}">
+                <td class="rank-cell">${rankDisplay}</td>
+                <td class="username-cell">${user.username}</td>
+                <td class="credits-cell">${user.credits.toFixed(2)} Wiz</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function switchTab(tabName) {
+    // Masquer tous les onglets
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Masquer tous les boutons actifs
+    const tabButtons = document.querySelectorAll('.tab');
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Afficher l'onglet sélectionné
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+    
+    // Charger les données selon l'onglet
+    if (tabName === 'teams') {
+        loadTeams();
+    } else if (tabName === 'programme') {
+        loadScheduledMatches();
+        loadTeamSelects();
+    } else if (tabName === 'history') {
+        loadHistory();
+    } else if (tabName === 'leaderboard') {
+        loadLeaderboard();  // ← Ajoute cette condition
+    }
+}
+
 // Charger les équipes au démarrage
 loadTeams();
