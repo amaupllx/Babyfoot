@@ -7,7 +7,7 @@ from utils import (
     calculate_odds, add_match, read_matches,
     read_scheduled_matches, add_scheduled_match, delete_scheduled_match,
     verify_user, get_user_credits, is_admin, add_bet, get_user_bets, add_credits_to_all_users,
-    get_leaderboard,
+    get_leaderboard, toggle_bet_status, check_can_bet,
 )
 
 app = Flask(__name__)
@@ -154,6 +154,14 @@ def delete_scheduled(match_id):
     delete_scheduled_match(match_id)
     return jsonify({'success': True})
 
+@app.route('/api/scheduled/<int:match_id>/toggle_bet', methods=['POST'])
+def toggle_bet(match_id):
+    """API pour bloquer/débloquer les paris d'un match"""
+    if 'username' not in session or not session.get('is_admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    new_status = toggle_bet_status(match_id)
+    return jsonify({'success': True, 'can_bet': new_status})
 
 @app.route('/api/match', methods=['POST'])
 def match():
@@ -208,11 +216,14 @@ def user_info():
 
 @app.route('/api/user/matches')
 def user_matches():
-    """Récupère les matchs disponibles pour parier"""
+    """Récupère les matchs disponibles pour parier (seulement ceux ouverts)"""
     if 'username' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
-    return jsonify(read_scheduled_matches())
+    all_matches = read_scheduled_matches()
+    # Filtrer pour ne montrer que les matchs où can_bet=True
+    open_matches = [m for m in all_matches if m.get('can_bet', 'True') == 'True']
+    return jsonify(open_matches)
 
 
 @app.route('/api/odds')
@@ -256,6 +267,10 @@ def place_bet():
     bet_type = data['bet_type']  # 'team1', 'team2', ou 'draw'
     amount = float(data['amount'])
     odds = float(data['odds'])
+    
+    # 🔒 VÉRIFICATION : Le match accepte-t-il encore les paris ?
+    if not check_can_bet(match_id):
+        return jsonify({'error': 'Les paris sont fermés pour ce match'}), 403
     
     # Vérifier que l'utilisateur a assez de crédits
     credits = get_user_credits(username)

@@ -35,7 +35,7 @@ def init_csv_files():
     if not os.path.exists(SCHEDULED_FILE):
         with open(SCHEDULED_FILE, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(['id', 'team1', 'team2', 'date_created'])
+            writer.writerow(['id', 'team1', 'team2', 'date_created', 'can_bet'])
     
     if not os.path.exists(USERS_FILE):
         with open(USERS_FILE, 'w', newline='', encoding='utf-8') as f:
@@ -290,7 +290,7 @@ def read_scheduled_matches():
 
 
 def add_scheduled_match(team1, team2):
-    """Ajoute un match programmé"""
+    """Ajoute un match programmé avec can_bet=True par défaut"""
     matches = read_scheduled_matches()
     # Trouver le prochain ID
     if matches:
@@ -300,7 +300,7 @@ def add_scheduled_match(team1, team2):
     
     with open(SCHEDULED_FILE, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow([next_id, team1, team2, datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
+        writer.writerow([next_id, team1, team2, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'True'])
     
     return next_id
 
@@ -310,10 +310,43 @@ def delete_scheduled_match(match_id):
     matches = read_scheduled_matches()
     with open(SCHEDULED_FILE, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'team1', 'team2', 'date_created'])
+        writer.writerow(['id', 'team1', 'team2', 'date_created', 'can_bet'])
         for match in matches:
             if match['id'] != str(match_id):
-                writer.writerow([match['id'], match['team1'], match['team2'], match['date_created']])
+                can_bet = match.get('can_bet', 'True')  # Par défaut True pour la rétrocompatibilité
+                writer.writerow([match['id'], match['team1'], match['team2'], match['date_created'], can_bet])
+
+
+def toggle_bet_status(match_id):
+    """Bascule le statut can_bet d'un match (True <-> False)"""
+    matches = read_scheduled_matches()
+    with open(SCHEDULED_FILE, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['id', 'team1', 'team2', 'date_created', 'can_bet'])
+        for match in matches:
+            if match['id'] == str(match_id):
+                # Inverser le statut
+                current_status = match.get('can_bet', 'True')
+                new_status = 'False' if current_status == 'True' else 'True'
+                writer.writerow([match['id'], match['team1'], match['team2'], match['date_created'], new_status])
+                print(f"🔒 Match {match_id}: Paris {'bloqués' if new_status == 'False' else 'ouverts'}")
+            else:
+                can_bet = match.get('can_bet', 'True')
+                writer.writerow([match['id'], match['team1'], match['team2'], match['date_created'], can_bet])
+    
+    # Retourner le nouveau statut
+    matches = read_scheduled_matches()
+    match = next((m for m in matches if m['id'] == str(match_id)), None)
+    return match.get('can_bet', 'True') == 'True' if match else True
+
+
+def check_can_bet(match_id):
+    """Vérifie si un match accepte les paris"""
+    matches = read_scheduled_matches()
+    match = next((m for m in matches if m['id'] == str(match_id)), None)
+    if not match:
+        return False
+    return match.get('can_bet', 'True') == 'True'
 
 
 # ============ CALCULS ELO ============

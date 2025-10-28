@@ -136,6 +136,15 @@ async function placeBet(matchId, betType, odds) {
             body: JSON.stringify({match_id: matchId, bet_type: betType, amount, odds})
         });
         
+        if (response.status === 403) {
+            // Paris fermés
+            const data = await response.json();
+            alert('⚠️ ' + data.error);
+            closeBetModal();
+            loadMatches(); // Recharger pour enlever le match de la liste
+            return;
+        }
+        
         const data = await response.json();
         
         if (data.success) {

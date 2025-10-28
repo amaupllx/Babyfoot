@@ -166,11 +166,27 @@ async function loadScheduledMatches() {
         const oddsResponse = await fetch(`/api/odds?team1=${match.team1}&team2=${match.team2}`);
         const oddsData = await oddsResponse.json();
         
+        // Déterminer le statut des paris
+        const canBet = match.can_bet === 'True' || match.can_bet === true;
+        const badgeClass = canBet ? 'open' : 'closed';
+        const badgeText = canBet ? '🔓 OUVERT' : '🔒 FERMÉ';
+        
         html += `
             <div class="match-item">
                 <div class="match-header">
                     <div class="match-teams">${match.team1} vs ${match.team2}</div>
                 </div>
+                
+                <!-- Section Switch Paris -->
+                <div class="bet-status-container">
+                    <span class="bet-status-label">Paris :</span>
+                    <label class="switch">
+                        <input type="checkbox" ${canBet ? 'checked' : ''} onchange="toggleBetStatus(${match.id})">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="bet-status-badge ${badgeClass}">${badgeText}</span>
+                </div>
+                
                 <div class="match-odds">
                     <div class="odds-box">
                         <div class="odds-label">Victoire ${match.team1}</div>
@@ -241,6 +257,20 @@ async function deleteScheduledMatch(matchId) {
     
     if (response.ok) {
         loadScheduledMatches();
+    }
+}
+
+async function toggleBetStatus(matchId) {
+    const response = await fetch(`/api/scheduled/${matchId}/toggle_bet`, {
+        method: 'POST'
+    });
+    
+    if (response.ok) {
+        const data = await response.json();
+        // Pas besoin d'alert, le switch et le badge se mettent à jour automatiquement
+        loadScheduledMatches();
+    } else {
+        alert('Erreur lors du changement de statut');
     }
 }
 
