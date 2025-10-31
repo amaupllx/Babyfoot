@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1 style="margin-bottom: 0;">⚽ WEEZNAMAX</h1>
+            <img src="{{ url_for('static', filename='logo_wiz.jpg') }}" alt="WEEZNAMAX" style="height: 80px; margin-bottom: 0;">
             <div>
                 <span style="color: #fff; margin-right: 15px; font-weight: bold;">👤 Admin</span>
                 <a href="/logout" class="logout-btn">🚪 Déconnexion</a>
@@ -21,7 +21,8 @@
                 <button class="tab active" onclick="switchTab('teams')">Gestion des Équipes</button>
                 <button class="tab" onclick="switchTab('programme')">Programme</button>
                 <button class="tab" onclick="switchTab('history')">Historique</button>
-                <button class="tab" onclick="switchTab('leaderboard')">🏆 Classement</button>
+                <button class="tab" onclick="switchTab('users')">👥 Utilisateurs</button>
+                <button class="tab" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
             </div>
             
             <!-- Onglet Gestion des Équipes -->
@@ -47,7 +48,7 @@
                 <div id="teamsList" class="teams-grid"></div>
                 
                 <!-- Distribution de crédits -->
-                <div style="margin-top: 40px; padding: 15px; background: #f0f8ff; border-radius: 8px;">
+                <div style="margin-top: 40px; padding: 15px; background: #f80404; border-radius: 8px;">
                     <h3>💰 Distribution de crédits</h3>
                     <button onclick="distributeCredits()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
                         Ajouter 10 Wiz à tous les utilisateurs
@@ -77,6 +78,29 @@
             <div id="history" class="tab-content">
                 <h2>Historique des Matchs</h2>
                 <div id="matchHistory" class="match-history"></div>
+            </div>
+            
+            <!-- Onglet Utilisateurs -->
+            <div id="users" class="tab-content">
+                <h2>Ajouter un Utilisateur</h2>
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label for="userName">Nom d'utilisateur</label>
+                        <input type="text" id="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Mot de passe</label>
+                        <input type="text" id="userPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userCredits">Crédits initiaux (Wiz)</label>
+                        <input type="number" id="userCredits" value="100" step="0.01" required>
+                    </div>
+                    <button type="submit">Ajouter l'utilisateur</button>
+                </form>
+                
+                <h2 style="margin-top: 40px;">Utilisateurs Enregistrés</h2>
+                <div id="usersList" class="teams-grid"></div>
             </div>
 
             <!-- Onglet Classement -->
@@ -108,6 +132,31 @@
                 </div>
                 <button type="submit">Sauvegarder</button>
                 <button type="button" class="secondary" onclick="closeEditModal()">Annuler</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pour modifier un utilisateur -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditUserModal()">&times;</span>
+            <h2>Modifier l'utilisateur</h2>
+            <form id="editUserForm">
+                <input type="hidden" id="editOldUsername">
+                <div class="form-group">
+                    <label for="editUsername">Nom d'utilisateur</label>
+                    <input type="text" id="editUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPassword">Mot de passe</label>
+                    <input type="text" id="editPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCredits">Crédits (Wiz)</label>
+                    <input type="number" id="editCredits" step="0.01" required>
+                </div>
+                <button type="submit">Sauvegarder</button>
+                <button type="button" class="secondary" onclick="closeEditUserModal()">Annuler</button>
             </form>
         </div>
     </div>

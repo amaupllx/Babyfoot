@@ -7,7 +7,7 @@ from utils import (
     calculate_odds, add_match, read_matches,
     read_scheduled_matches, add_scheduled_match, delete_scheduled_match,
     verify_user, get_user_credits, is_admin, add_bet, get_user_bets, add_credits_to_all_users,
-    get_leaderboard, toggle_bet_status, check_can_bet,
+    get_leaderboard, toggle_bet_status, check_can_bet, add_user, update_user, delete_user, read_users
 )
 
 app = Flask(__name__)
@@ -297,6 +297,57 @@ def user_bets():
     
     username = session['username']
     return jsonify(get_user_bets(username))
+
+@app.route('/api/users', methods=['GET', 'POST'])
+def users():
+    """API pour gérer les utilisateurs"""
+    if 'username' not in session or not session.get('is_admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    if request.method == 'POST':
+        data = request.json
+        username = data['username']
+        password = data['password']
+        credits = float(data.get('credits', 100))
+        
+        # Vérifier que l'utilisateur n'existe pas déjà
+        users = read_users()
+        if any(u['username'] == username for u in users):
+            return jsonify({'error': 'Cet utilisateur existe déjà'}), 400
+        
+        add_user(username, password, credits)
+        return jsonify({'success': True})
+    else:
+        users = read_users()
+        return jsonify(users)
+
+
+@app.route('/api/users/update', methods=['PUT'])
+def update_user_route():
+    """API pour modifier un utilisateur"""
+    if 'username' not in session or not session.get('is_admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    update_user(
+        data['old_username'],
+        data['new_username'],
+        data['new_password'],
+        float(data['new_credits'])
+    )
+    return jsonify({'success': True})
+
+
+@app.route('/api/users/<username>', methods=['DELETE'])
+def delete_user_route(username):
+    """API pour supprimer un utilisateur"""
+    if 'username' not in session or not session.get('is_admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    if delete_user(username):
+        return jsonify({'success': True})
+    else:
+        return jsonify({'error': 'Impossible de supprimer cet utilisateur'}), 400
 
 
 if __name__ == '__main__':

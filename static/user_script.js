@@ -20,7 +20,6 @@ async function loadUserInfo() {
     const data = await response.json();
     
     currentUser = data;
-    document.getElementById('userName').textContent = data.username;
     document.getElementById('userCredits').textContent = data.credits.toFixed(2);
 }
 

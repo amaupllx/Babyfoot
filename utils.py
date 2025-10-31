@@ -450,3 +450,37 @@ def read_matches():
         for row in reader:
             matches.append(row)
     return matches
+
+def add_user(username, password, credits=100):
+    """Ajoute un nouvel utilisateur"""
+    with open(USERS_FILE, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([username, password, credits])
+
+
+def update_user(old_username, new_username, new_password, new_credits):
+    """Met à jour un utilisateur"""
+    users = read_users()
+    with open(USERS_FILE, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['username', 'password', 'credits'])
+        for user in users:
+            if user['username'] == old_username:
+                writer.writerow([new_username, new_password, new_credits])
+            else:
+                writer.writerow([user['username'], user['password'], user['credits']])
+
+
+def delete_user(username):
+    """Supprime un utilisateur"""
+    if username == 'admin':
+        return False  # Empêcher la suppression de l'admin
+    
+    users = read_users()
+    with open(USERS_FILE, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['username', 'password', 'credits'])
+        for user in users:
+            if user['username'] != username:
+                writer.writerow([user['username'], user['password'], user['credits']])
+    return True

@@ -14,6 +14,8 @@ function switchTab(tabName) {
         loadHistory();
     } else if (tabName === 'teams') {
         loadTeams();
+    } else if (tabName === 'users') {
+        loadUsers();
     }
 }
 
@@ -409,10 +411,112 @@ function switchTab(tabName) {
         loadTeamSelects();
     } else if (tabName === 'history') {
         loadHistory();
+    } else if (tabName === 'users') {
+
     } else if (tabName === 'leaderboard') {
-        loadLeaderboard();  // ← Ajoute cette condition
+        loadLeaderboard();
+    }
+}
+
+// ========== GESTION DES UTILISATEURS ==========
+
+document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('userName').value;
+    const password = document.getElementById('userPassword').value;
+    const credits = parseFloat(document.getElementById('userCredits').value);
+    
+    const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password, credits})
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+        document.getElementById('userName').value = '';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userCredits').value = '100';
+        loadUsers();
+    } else {
+        alert(data.error || 'Erreur lors de l\'ajout de l\'utilisateur');
+    }
+});
+
+async function loadUsers() {
+    const response = await fetch('/api/users');
+    const users = await response.json();
+    
+    const usersList = document.getElementById('usersList');
+    usersList.innerHTML = users.map(user => `
+        <div class="team-card">
+            <div class="team-header">
+                <div class="team-name">${user.username}</div>
+            </div>
+            <div class="team-elo">${user.credits.toFixed(2)} Wiz</div>
+            <div class="team-poule">${user.username === 'admin' ? '⚡ Administrateur' : '👤 Utilisateur'}</div>
+            <div class="team-actions">
+                <button class="secondary" onclick="openEditUserModal('${user.username}', '${user.password}', ${user.credits})">Modifier</button>
+                ${user.username !== 'admin' ? `<button class="danger" onclick="deleteUser('${user.username}')">Supprimer</button>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function openEditUserModal(username, password, credits) {
+    document.getElementById('editOldUsername').value = username;
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editPassword').value = password;
+    document.getElementById('editCredits').value = credits;
+    document.getElementById('editUserModal').style.display = 'block';
+}
+
+function closeEditUserModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+}
+
+document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const oldUsername = document.getElementById('editOldUsername').value;
+    const newUsername = document.getElementById('editUsername').value;
+    const newPassword = document.getElementById('editPassword').value;
+    const newCredits = parseFloat(document.getElementById('editCredits').value);
+    
+    const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            old_username: oldUsername,
+            new_username: newUsername,
+            new_password: newPassword,
+            new_credits: newCredits
+        })
+    });
+    
+    if (response.ok) {
+        closeEditUserModal();
+        loadUsers();
+    }
+});
+
+async function deleteUser(username) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur "${username}" ?`)) {
+        return;
+    }
+    
+    const response = await fetch(`/api/users/${username}`, {
+        method: 'DELETE'
+    });
+    
+    if (response.ok) {
+        loadUsers();
+    } else {
+        const data = await response.json();
+        alert(data.error || 'Erreur lors de la suppression');
     }
 }
 
 // Charger les équipes au démarrage
 loadTeams();
+loadUsers();

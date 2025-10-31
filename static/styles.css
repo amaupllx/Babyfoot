@@ -624,3 +624,286 @@ input:checked + .slider:before {
 .bet-status-badge.open {
     animation: pulse 2s infinite;
 }
+
+/* ========== RESPONSIVE MOBILE ========== */
+
+@media (max-width: 768px) {
+    /* En-tête et titre */
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 0;
+    }
+    
+    /* GARDER LE LOGO ET LE BANDEAU SUR LA MÊME LIGNE */
+    h1, img[alt="WEEZNAMAX"] {
+        height: 50px !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Header utilisateur - RESTER EN LIGNE */
+    .container > div:first-child {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 10px;
+        margin-bottom: 15px !important;
+    }
+    
+    .container > div:first-child > div {
+        text-align: right !important;
+    }
+    
+    #userName {
+        font-size: 0.9em;
+    }
+    
+    #userCredits {
+        font-size: 1.3em !important;
+        margin: 5px 0 !important;
+    }
+    
+    /* Card principale */
+    .card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    h2 {
+        font-size: 1.2em;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+    
+    /* ONGLETS - GARDER SUR LA MÊME LIGNE */
+    .tabs {
+        flex-direction: row !important;
+        gap: 8px;
+        margin-bottom: 15px;
+        overflow-x: auto;
+    }
+    
+    .tab {
+        padding: 12px 20px;
+        font-size: 0.95em;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
+    /* Matchs disponibles - cartes de paris */
+    .match-item {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .match-teams {
+        font-size: 1em;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+    
+    /* GRILLE DES COTES - GARDER SUR LA MÊME LIGNE */
+    .match-odds {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px;
+    }
+    
+    /* Cartes de paris - réduites mais tactiles */
+    .bet-card {
+        padding: 15px 10px;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .bet-card:active {
+        transform: scale(0.98);
+    }
+    
+    .odds-label {
+        font-size: 0.85em;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    
+    .odds-value-small {
+        font-size: 1.8em;
+        margin: 8px 0;
+    }
+    
+    .bet-card > div:last-child {
+        font-size: 0.85em;
+    }
+    
+    /* Modal - plein écran sur mobile */
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    #betModalContent {
+        font-size: 0.95em;
+    }
+    
+    #betModalContent > div:first-child,
+    #betModalContent > div:nth-child(3) {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    #betModalContent > div:first-child > div {
+        font-size: 1em;
+        margin-bottom: 8px;
+    }
+    
+    /* Input de montant */
+    #betAmount {
+        font-size: 1.2em !important;
+        padding: 12px !important;
+        height: 50px;
+        text-align: center;
+    }
+    
+    #potentialWin {
+        font-size: 1.8em !important;
+    }
+    
+    /* Boutons */
+    button {
+        padding: 12px 20px;
+        font-size: 1em;
+        min-height: 45px;
+    }
+    
+    .score-button, button.score-button {
+        padding: 15px 25px;
+        font-size: 1.1em;
+        min-height: 50px;
+    }
+    
+    .logout-btn {
+        padding: 8px 12px;
+        font-size: 0.85em;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    
+    /* Liste des paris */
+    #betsList .match-item {
+        padding: 12px;
+    }
+    
+    #betsList .match-item > div:nth-child(2) {
+        font-size: 0.9em;
+    }
+    
+    #betsList .match-item > div:last-child {
+        font-size: 1em;
+    }
+    
+    .match-date {
+        font-size: 0.8em;
+    }
+    
+    /* Fermer le modal */
+    .close {
+        font-size: 35px;
+        padding: 5px;
+        line-height: 1;
+    }
+    
+    /* Améliorer les inputs et selects */
+    input, select {
+        font-size: 16px !important; /* Évite le zoom auto sur iOS */
+        padding: 12px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    /* Labels */
+    label {
+        font-size: 0.95em;
+        margin-bottom: 8px;
+    }
+    
+    /* Teams grid pour admin */
+    .teams-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Formulaires */
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    /* Table du leaderboard */
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 10px 6px;
+        font-size: 0.9em;
+    }
+    
+    .rank-cell {
+        font-size: 1em;
+        width: 60px;
+    }
+    
+    .username-cell {
+        font-size: 0.95em;
+    }
+    
+    .credits-cell {
+        font-size: 0.95em;
+    }
+    
+    /* Ajustements spécifiques page user */
+    .container > div:first-child > div > div:first-child {
+        font-size: 0.8em;
+        margin-bottom: 3px;
+    }
+    
+    .container > div:first-child > div > div:nth-child(2) {
+        margin-bottom: 8px;
+    }
+}
+
+/* Pour les très petits écrans (< 400px) */
+@media (max-width: 400px) {
+    h1, img[alt="WEEZNAMAX"] {
+        height: 45px !important;
+    }
+    
+    .card {
+        padding: 10px;
+    }
+    
+    .match-item {
+        padding: 12px 8px;
+    }
+    
+    .odds-value-small {
+        font-size: 1.5em;
+    }
+    
+    .odds-label {
+        font-size: 0.8em;
+    }
+    
+    #potentialWin {
+        font-size: 1.6em !important;
+    }
+    
+    .tab {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+    
+    #userCredits {
+        font-size: 1.2em !important;
+    }
+}
